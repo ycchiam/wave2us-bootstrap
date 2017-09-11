@@ -4,6 +4,7 @@ import { HomeComponent } from './home.component';
 
 const APP_ROUTES: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
+  { path: 'about', loadChildren: 'app/about/about.module#AboutModule'},
   { path: 'auth', loadChildren: 'app/auth/auth.module#AuthModule' },
   { path: 'profile', loadChildren: 'app/profile/profile.module#ProfileModule' }
 ];

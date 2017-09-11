@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {NgForm} from '@angular/forms';
 
-import { AuthService } from '../shared/auth.service';
-import { AlertsService } from '../shared/alerts/alerts.service';
+import {AuthService} from '../shared/auth.service';
+import {AlertsService} from '../shared/alerts/alerts.service';
+import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
 
 @Component({
   selector: 'app-tester',
@@ -12,13 +13,13 @@ import { AlertsService } from '../shared/alerts/alerts.service';
 export class ProfileComponent implements OnInit {
   userEmail = '';
   alerts = [];
+  items: FirebaseListObservable<any[]>;
 
-  constructor(private authService: AuthService,
-    private alertsService: AlertsService) { }
+  constructor(private authService: AuthService, private alertsService: AlertsService, private angularFireDatabase: AngularFireDatabase) {}
 
   onChangeMail(form: NgForm) {
     this.authService.setMailAddress(form.value)
-    .subscribe(
+      .subscribe(
       () => {
         this.userEmail = form.value.email;
         form.reset();
@@ -37,13 +38,13 @@ export class ProfileComponent implements OnInit {
           message: 'Could not change e-mail address. ' + message
         }, true);
       }
-    );
+      );
   }
 
   onChangePassword(form: NgForm) {
     this.authService.setPassword(form.value.oldPassword, form.value.password)
-    .first()
-    .subscribe(
+      .first()
+      .subscribe(
       () => {
         form.reset()
         this.alertsService.addAlert({
@@ -61,13 +62,14 @@ export class ProfileComponent implements OnInit {
           message: 'Could not change password. ' + message
         }, true);
       }
-    );
+      );
   }
 
   ngOnInit() {
     this.authService.getMailAddress().first().subscribe(
       (email) => this.userEmail = email
     )
+    this.items = this.angularFireDatabase.list('/images');
   }
 
 }
